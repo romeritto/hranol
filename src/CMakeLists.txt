@@ -1,4 +1,4 @@
-﻿# CMakeList.txt : CMake project for hranol, include source and define
+# CMakeList.txt : CMake project for hranol, include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.8)
 # Find OpenCV, you may need to set OpenCV_DIR variable
 # to the absolute path to the directory containing OpenCVConfig.cmake file
 # via the command line or GUI
-find_package(OpenCV REQUIRED HINTS $ENV{OpenCV_DIR}/lib)
+find_package(OpenCV 3 REQUIRED HINTS $ENV{OpenCV_DIR}/lib)
 
 if(CMAKE_VERSION VERSION_LESS "2.8.11")
   # Add OpenCV headers location to your include paths
