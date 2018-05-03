@@ -1,7 +1,7 @@
 //
 // Copyright © 2018 Roman Sobkuliak <r.sobkuliak@gmail.com>
 // This code is released under the license described in the LICENSE file
-// 
+//
 
 #ifndef FILTER_H
 #define FILTER_H
@@ -63,7 +63,7 @@ public:
 	}
 
 	static auto create(const std::string &mask_fname) {
-		return std::move(std::make_unique<MaskFilter>(mask_fname));
+		return std::make_unique<MaskFilter>(mask_fname);
 	}
 
 	virtual void apply_to(cv::Mat &img) {
@@ -81,7 +81,7 @@ public:
 	}
 };
 
-// RescaleFilter maps colors in range [beg_, end_] to [0, 255] 
+// RescaleFilter maps colors in range [beg_, end_] to [0, 255]
 class RescaleFilter : public IFilterPure
 {
 	// Rescale range [beg_, end_]
@@ -95,7 +95,7 @@ public:
 		if (beg_ < 0 || end_ > 255 || beg_ > end_)
 			throw HranolRuntimeException("Invalid range for rescale filter " + range_to_str_(beg_, end_));
 	}
-	
+
 	static auto create(int beg, int end) {
 		return std::make_unique<RescaleFilter>(beg, end);
 	}
@@ -156,7 +156,7 @@ class StaticBckgFilter : public IFilterWithPrecomp
 
 public:
 	StaticBckgFilter(double removal_factor) :
-		removal_factor_(removal_factor), is_factored_mean_valid_(false), count_(0)
+		count_(0), is_factored_mean_valid_(false), removal_factor_(removal_factor)
 	{
 		if (removal_factor <= 0)
 			throw HranolRuntimeException("Static background removal factor must be positive: " + std::to_string(removal_factor));

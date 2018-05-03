@@ -26,10 +26,11 @@ endif()
 
 # Add source to this project's executable.
 add_executable (hranol "hranol.cpp" "FolderCrawler.cpp" "ImageStore.cpp" "ImageProcessor.cpp")
-#target_include_directories(hranol PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+
+# Ensure that C++17 will be used
+set_property(TARGET hranol PROPERTY CXX_STANDARD 17)
 
 # Link your application with OpenCV libraries
 target_link_libraries(hranol ${OpenCV_LIBS})
 
 # TODO: Add tests and install targets if needed.
- 
