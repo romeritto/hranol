@@ -1761,7 +1761,7 @@ namespace args
                     {
                         parserCoroutine(coro.Parser());
                     }
-                    catch (args::SubparserError)
+                    catch (const args::SubparserError& e)
                     {
                     }
 #else
@@ -2737,11 +2737,11 @@ namespace args
                             Parse(curArgs.begin(), curArgs.end());
                             throw Completion("");
                         }
-                        catch (Completion &)
+                        catch (const Completion & e)
                         {
                             throw;
                         }
-                        catch (args::Error&)
+                        catch (const args::Error& e)
                         {
                             throw Completion("");
                         }
