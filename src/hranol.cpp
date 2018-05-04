@@ -79,7 +79,7 @@ void Hranol::parse_from_cli(int argc, char **argv)
 	{
 		parser.ParseCLI(argc, argv);
 	}
-	catch (args::Help)
+	catch (const args::Help & e)
 	{
 		std::cout << parser;
 		throw;
@@ -161,12 +161,12 @@ int main(int argc, char **argv)
 		hranol.parse_from_cli(argc, argv);
 		hranol.process();
 	}
-	catch (args::Help)
+	catch (const args::Help & e)
 	{
 		// A help page was requested 
 		return 0;
 	}
-	catch (args::Error)
+	catch (const args::Error & e)
 	{
 		// An exception was thrown while processing arguments
 		// Error message is already displayed in Batcher class
