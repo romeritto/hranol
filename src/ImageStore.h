@@ -45,8 +45,8 @@ public:
 		fs::path origin,
 		std::vector< fs::path> img_paths,
 		std::string folder_prefix)
-		: origin_(std::move(origin)), img_paths_(std::move(img_paths)),
-		dest_folder_prefix_(std::move(folder_prefix)), dest_created_(false) 
+		: origin_(std::move(origin)), dest_created_(false), dest_folder_prefix_(std::move(folder_prefix)),
+		img_paths_(std::move(img_paths))
 	{ 
 		assign_dest();
 	}

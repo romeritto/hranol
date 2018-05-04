@@ -25,7 +25,8 @@ using namespace std;
 
 inline bool validate_idx(size_t i, size_t sz)
 {
-	return (i >= 0 && i < sz);
+	// i >= 0 is satisfies because i is of type size_t 
+	return i < sz;
 }
 
 std::string IImageStore::get_img_path(size_t i) const
@@ -62,7 +63,7 @@ void IImageStore::save_img(const cv::Mat img, const fs::path & img_src)
 void IImageStore::assign_dest()
 {
 	string origin_fname = fs::canonical(
-		fs::system_complete(origin_)
+		fs::absolute(origin_)
 	).filename().string();
 
 	dest_ = origin_ / (dest_folder_prefix_ + origin_fname);

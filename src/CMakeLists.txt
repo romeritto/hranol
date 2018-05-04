@@ -17,10 +17,8 @@ if(MSVC)
     add_compile_options("/W4" "$<$<CONFIG:RELEASE>:/O2>")
 else()
     add_compile_options("-Wall" "-Wextra" "-Werror" "$<$<CONFIG:RELEASE>:-O3>")
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        add_compile_options("-stdlib=libc++")
-    else()
-        # nothing special for gcc at the moment
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        LIST(APPEND Std_LIBS "libstdc++fs.a")
     endif()
 endif()
 
@@ -30,7 +28,7 @@ add_executable (hranol "hranol.cpp" "FolderCrawler.cpp" "ImageStore.cpp" "ImageP
 # Ensure that C++17 will be used
 set_property(TARGET hranol PROPERTY CXX_STANDARD 17)
 
-# Link your application with OpenCV libraries
+# Link with libraries
 target_link_libraries(hranol ${OpenCV_LIBS})
+target_link_libraries(hranol ${Std_LIBS})
 
-# TODO: Add tests and install targets if needed.

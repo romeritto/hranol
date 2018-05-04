@@ -40,13 +40,14 @@ public:
 		bool incl_folder_prefix,
 		bool recursive, 
 		bool ram_friendly) 
-		: folder_prefix_(folder_prefix), fname_regex_(fname_regex_str), incl_folder_prefix_(incl_folder_prefix),
-		recursive_(recursive), ram_friendly_(ram_friendly)
+		: recursive_(recursive), ram_friendly_(ram_friendly), fname_regex_(fname_regex_str),
+ 		folder_prefix_(folder_prefix), incl_folder_prefix_(incl_folder_prefix)
+
 	{
 		// Loop is reversed so that first folders in the original vector
 		// will be first in the stack
 		for (auto it = folders.crbegin(); it != folders.crend(); ++it)
-			folders_.push(std::experimental::filesystem::path(*it));
+			folders_.push(fs::path(*it));
 	}
 
 	// Inspects a single folder and returns IImageStore that contains
