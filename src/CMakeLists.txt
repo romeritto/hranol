@@ -24,7 +24,7 @@ if(MSVC)
 else()
     add_compile_options("-Wall" "-Wextra" "-Werror" "$<$<CONFIG:RELEASE>:-O3>" "-std=c++1z")
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	# libstdc++fs.a has to be linked explicitly for <filesystem> 
+    # libstdc++fs.a has to be linked explicitly for <filesystem> 
         LIST(APPEND Std_LIBS "libstdc++fs.a")
     endif()
 endif()

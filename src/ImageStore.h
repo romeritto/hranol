@@ -13,11 +13,12 @@
 #include <vector>
 #include <memory>
 
-#ifdef _MSC_VER		// MSVC compiler
-	namespace fs = std::experimental::filesystem;
+#ifdef _MSC_VER        // MSVC compiler
+    namespace fs = std::experimental::filesystem;
 #else
-	namespace fs = std::filesystem;
-#endif	// _MSC_VER
+    namespace fs = std::filesystem;
+#endif    // _MSC_VER
+
 
 // IImageStore is an interface class for accessing the images that will be filtered.
 //
@@ -29,47 +30,44 @@
 class IImageStore 
 {
 protected:
-	fs::path origin_;
-	fs::path dest_;
-	bool dest_created_;
-	std::string dest_folder_prefix_;
-	const std::vector< fs::path> img_paths_;
+    fs::path origin_;
+    fs::path dest_;
+    bool dest_created_;
+    const std::vector< fs::path> img_paths_;
 
-	cv::Mat read_img(const fs::path & s);
-	void save_img(cv::Mat img, const fs::path & img_src);
-	void assign_dest();
-	void create_dest();
+    cv::Mat read_img(const fs::path & s);
+    void save_img(cv::Mat img, const fs::path & img_src);
+    void assign_dest(const std::string & dest_folder_prefix);
+    void create_dest();
 
 public:
-	IImageStore(
-		fs::path origin,
-		std::vector< fs::path> img_paths,
-		std::string folder_prefix)
-		: origin_(std::move(origin)), dest_created_(false), dest_folder_prefix_(std::move(folder_prefix)),
-		img_paths_(std::move(img_paths))
-	{ 
-		assign_dest();
-	}
+    IImageStore(
+        fs::path origin,
+        std::vector< fs::path> img_paths,
+        const std::string & folder_prefix)
+        : origin_(std::move(origin)), dest_created_(false),
+        img_paths_(std::move(img_paths))
+    { 
+        assign_dest(folder_prefix);
+    }
 
-	virtual size_t size() const
-	{
-		return img_paths_.size();
-	}
+    virtual size_t size() const {
+        return img_paths_.size();
+    }
 
-	fs::path get_origin() const
-	{
-		return origin_;
-	}
+    fs::path get_origin() const {
+        return origin_;
+    }
 
-	fs::path get_dest() const
-	{
-		return dest_;
-	}
+    fs::path get_dest() const {
+        return dest_;
+    }
 
-	std::string get_img_path(size_t i) const;
-	virtual cv::Mat & get(size_t i) = 0;
-	virtual void release(size_t i) = 0;
-	virtual void save(size_t i) = 0;
+    std::string get_img_path(size_t i) const;
+    
+    virtual cv::Mat & get(size_t i) = 0;
+    virtual void release(size_t i) = 0;
+    virtual void save(size_t i) = 0;
 };
 
 
@@ -77,17 +75,17 @@ public:
 // image are fast.
 class RAMImageStore : public IImageStore
 {
-	std::vector<cv::Mat> imgs_;
+    std::vector< cv::Mat> imgs_;
 
 public:
-	RAMImageStore(std::string origin, std::vector<fs::path> img_paths, std::string folder_prefix)
-		: IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix))
-	{ 
-		imgs_.resize(img_paths_.size());
-	}
-	virtual cv::Mat & get(size_t i);
-	virtual void release(size_t i);
-	virtual void save(size_t i);
+    RAMImageStore(std::string origin, std::vector< fs::path> img_paths, std::string folder_prefix)
+        : IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix))
+    { 
+        imgs_.resize(img_paths_.size());
+    }
+    virtual cv::Mat & get(size_t i);
+    virtual void release(size_t i);
+    virtual void save(size_t i);
 };
 
 
@@ -95,18 +93,18 @@ public:
 // image from the loaded one must be preceded with release() of the currently loaded image.
 class OnDemandImageStore : public IImageStore
 {
-	cv::Mat loaded_img_;
-	size_t loaded_img_idx_;
-	bool is_img_loaded_;
+    cv::Mat loaded_img_;
+    size_t loaded_img_idx_;
+    bool is_img_loaded_;
 
 public:
-	OnDemandImageStore(std::string origin, std::vector<fs::path> img_paths, std::string folder_prefix)
-		: IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix)),
-		is_img_loaded_(false) { }
-	
-	virtual cv::Mat & get(size_t i);
-	virtual void release(size_t i);
-	virtual void save(size_t i);
+    OnDemandImageStore(std::string origin, std::vector< fs::path> img_paths, std::string folder_prefix)
+        : IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix)),
+        is_img_loaded_(false) {}
+    
+    virtual cv::Mat & get(size_t i);
+    virtual void release(size_t i);
+    virtual void save(size_t i);
 };
 
 #endif // IMAGE_STORE_H

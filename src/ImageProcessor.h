@@ -11,24 +11,26 @@
 
 #include <memory>
 
-
-class ImageProcessor {
-	PureFiltersVec pure_filters_;
-	PrecompFiltersVec precomp_filters_;
+// Stores filters and applies them to images
+class ImageProcessor
+{
+    PureFiltersVec pure_filters_;
+    PrecompFiltersVec precomp_filters_;
 
 public:
-	ImageProcessor() { }
+    ImageProcessor() {}
 
-	void add_filter(std::unique_ptr<IFilterPure> filter) {
-		pure_filters_.push_back(std::move(filter));
-	}
-	void add_filter(std::unique_ptr<IFilterWithPrecomp> filter) {
-		precomp_filters_.push_back(std::move(filter));
-	}
-	
-	void apply_filters(IImageStore * imstore);
+    void add_filter(std::unique_ptr< IFilterPure> filter) {
+        pure_filters_.push_back(std::move(filter));
+    }
+
+    void add_filter(std::unique_ptr< IFilterWithPrecomp> filter) {
+        precomp_filters_.push_back(std::move(filter));
+    }
+    
+    void apply_filters(IImageStore * imstore);
 
 private:
-	void create_log_(const IImageStore * imstore);
+    void create_log_(const IImageStore * imstore);
 };
 #endif // IMAGE_PROCESSOR_H
