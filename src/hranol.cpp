@@ -17,7 +17,7 @@
 
 
 class Hranol {
-	std::vector<std::string> folders_;
+	std::vector< std::string> folders_;
 	bool recursive_;
 	bool ram_friendly_;
 	std::string fname_regex_;

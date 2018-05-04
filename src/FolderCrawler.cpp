@@ -14,7 +14,12 @@
 #include <memory>
 
 using namespace std;
-namespace fs = std::experimental::filesystem;
+
+#ifdef _MSC_VER		// MSVC compiler
+	namespace fs = std::experimental::filesystem;
+#else
+	namespace fs = std::filesystem;
+#endif	// _MSC_VER
 
 
 unique_ptr<IImageStore> FolderCrawler::get_next_run()

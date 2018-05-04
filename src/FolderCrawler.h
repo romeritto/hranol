@@ -15,6 +15,11 @@
 #include <stack>
 #include <memory>
 
+#ifdef _MSC_VER		// MSVC compiler
+	namespace fs = std::experimental::filesystem;
+#else
+	namespace fs = std::filesystem;
+#endif	// _MSC_VER
 
 // FolderCrawler is used to crawl (potentially recursively) folders in folders_ vector and picks
 // the files that should be filtered.
@@ -25,7 +30,7 @@ class FolderCrawler {
 	std::string folder_prefix_;
 	bool incl_folder_prefix_;
 
-	std::stack<std::experimental::filesystem::path> folders_;
+	std::stack<fs::path> folders_;
 
 public:
 	FolderCrawler(

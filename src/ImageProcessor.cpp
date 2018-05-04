@@ -11,15 +11,12 @@
 
 #include <memory>
 #include <string>
-#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <iomanip> // put_time
 #include <chrono>
 
 using namespace std;
-namespace fs = std::experimental::filesystem;
-
 
 void ImageProcessor::apply_filters(IImageStore * imstore)
 {

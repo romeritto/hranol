@@ -15,7 +15,12 @@
 #include <cassert>
 
 using namespace std;
-namespace fs = std::experimental::filesystem;
+
+#ifdef _MSC_VER		// MSVC compiler
+	namespace fs = std::experimental::filesystem;
+#else
+	namespace fs = std::filesystem;
+#endif	// _MSC_VER
 
 
 inline bool validate_idx(size_t i, size_t sz)

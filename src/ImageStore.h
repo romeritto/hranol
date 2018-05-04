@@ -13,6 +13,11 @@
 #include <vector>
 #include <memory>
 
+#ifdef _MSC_VER		// MSVC compiler
+	namespace fs = std::experimental::filesystem;
+#else
+	namespace fs = std::filesystem;
+#endif	// _MSC_VER
 
 // IImageStore is an interface class for accessing the images that will be filtered.
 //
@@ -24,23 +29,21 @@
 class IImageStore 
 {
 protected:
-	using fs_path = std::experimental::filesystem::path;
-
-	fs_path origin_;
-	fs_path dest_;
+	fs::path origin_;
+	fs::path dest_;
 	bool dest_created_;
 	std::string dest_folder_prefix_;
-	const std::vector<fs_path> img_paths_;
+	const std::vector< fs::path> img_paths_;
 
-	cv::Mat read_img(const fs_path & s);
-	void save_img(cv::Mat img, const fs_path & img_src);
+	cv::Mat read_img(const fs::path & s);
+	void save_img(cv::Mat img, const fs::path & img_src);
 	void assign_dest();
 	void create_dest();
 
 public:
 	IImageStore(
-		fs_path origin,
-		std::vector<fs_path> img_paths,
+		fs::path origin,
+		std::vector< fs::path> img_paths,
 		std::string folder_prefix)
 		: origin_(std::move(origin)), img_paths_(std::move(img_paths)),
 		dest_folder_prefix_(std::move(folder_prefix)), dest_created_(false) 
@@ -53,12 +56,12 @@ public:
 		return img_paths_.size();
 	}
 
-	fs_path get_origin() const
+	fs::path get_origin() const
 	{
 		return origin_;
 	}
 
-	fs_path get_dest() const
+	fs::path get_dest() const
 	{
 		return dest_;
 	}
@@ -77,7 +80,7 @@ class RAMImageStore : public IImageStore
 	std::vector<cv::Mat> imgs_;
 
 public:
-	RAMImageStore(std::string origin, std::vector<fs_path> img_paths, std::string folder_prefix)
+	RAMImageStore(std::string origin, std::vector<fs::path> img_paths, std::string folder_prefix)
 		: IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix))
 	{ 
 		imgs_.resize(img_paths_.size());
@@ -97,7 +100,7 @@ class OnDemandImageStore : public IImageStore
 	bool is_img_loaded_;
 
 public:
-	OnDemandImageStore(std::string origin, std::vector<fs_path> img_paths, std::string folder_prefix)
+	OnDemandImageStore(std::string origin, std::vector<fs::path> img_paths, std::string folder_prefix)
 		: IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix)),
 		is_img_loaded_(false) { }
 	
