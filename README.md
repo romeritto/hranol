@@ -1,2 +1,22 @@
 # hranol
 Multiplatform image batch processing
+
+# Install links
+OpenCV
+https://github.com/milq/milq
+
+GCC 8
+sudo apt-get update -y &&
+sudo apt-get upgrade -y &&
+sudo apt-get dist-upgrade -y &&
+sudo apt-get install build-essential software-properties-common -y &&
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y &&
+sudo apt-get update -y &&
+sudo apt-get install gcc-8 g++-8 -y
+
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 700 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
+
+sudo update-alternatives --config gcc
+
+select gcc-8
