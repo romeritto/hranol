@@ -36,8 +36,8 @@ in `Clang` (5. May 2018).
 Installing `CMake` and `Visual Studio` is straighforward, but `OpenCV` might be a little tricky.
 
 #### OpenCV
-You should install pre-built OpenCv libraries. The easiest way to do this is by following the official
-guide: [Installation OpenCV by Using the Pre-built Libraries](https://docs.opencv.org/3.2.0/d3/d52/tutorial_windows_install.html)
+You should install pre-built OpenCV libraries. The easiest way to do this is by following the official
+guide: [OpenCV installation by Using the Pre-built Libraries](https://docs.opencv.org/3.2.0/d3/d52/tutorial_windows_install.html)
 Don't forget to correctly set `OPENCV_DIR` environment variable and include `%OPENCV_DIR%\bin` into your `PATH`.
 
 With all the prerequisites installed, you need to clone this repo:
@@ -67,7 +67,7 @@ Below is a description of 3 built-in filters.
 Use this filter to remove static background. It averages images in the folder and then subtracts the average multiplied by *factor* from each image. In hranol, you can invoke this filter by using `-s[factor]` option, where *factor* is a positive floating point value.
 
 ### Contrast filter (Normalization)
-Filter changes the range of pixel intensity values. Grayscale images have their intesity values in range *[0, 255]*. This filter takes a range *[b, e]* and assigns a new value `In` to each pixel with intensity `I` using the following rules:
+Filter changes the range of pixel intensity values. Grayscale images have their intensity values in range *[0, 255]*. The filter takes a range *[b, e]* and maps it to the original *[0, 255]*. It assigns a new value `In` to each pixel with intensity `I` using the following rules:
 - `(I < b) -> In = 0`
 - `(I > e) -> In = 255`
 - `otherwise In = (255 * (I - b + 1)) / (e - b + 2)`
@@ -78,7 +78,7 @@ You can use this filter in hranol by specifying `-b[range begin]` and `-e[range 
 Use this filter to mask your images. You should provide a path to *mask image* with option `-m[mask file path]`. The *mask image* has to be of the same size as all of the input images. Masking algorithm is simple, *mask image* non-zero elements indicate which image elements need to be copied.
 
 ## What does hranol do
-After the input is parsed, all folders are processed separately. For each *input folder* output images are written to the *output folder* which is located in the currently processed folder. Name of the *output folder* is same as *input folder*, but prefixed with *fltrd_* (default behaviour, can be changed with `-p` option). A small log file named *fltrd_info.txt* is also stored in the *output folder*.
+After the input is parsed, all folders are processed separately. For each *input folder* output images are written to the *output folder* which is located in the *input folder*. Name of the *output folder* is same as *input folder*, but prefixed with *fltrd_* (default behaviour, can be changed with `-p` option). A small log file named *fltrd_info.txt* is also stored in the *output folder*.
 
 Filters are applied in the following order: 
 1. Background subtraction
@@ -158,10 +158,10 @@ If any folder starts with prefix `fltrd`, it is ignored. You can override this b
 ```
 $ hranol -m"mask.png" -f "^abc.*\.png" Movie1 Movie2
 ```
-The above command applies `mask.png` only to images in `Movie1` and `Movie2` that start with `abc` and have file extension `.png`.
+The above command applies `mask.png` only to images in `Movie1` and `Movie2` that start with `abc` and have file extension `.png`. Use [ECMAScript regex syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions).
 
 ### Changing output folder prefix
 ```
 $ hranol -s 2 -p "bckg_rem" --ram-friendly Movie1
 ```
-The command removes static background with factor `2` and stores the result in `Movie1/bckg_rem_Movie1` folder. It is also run in `ram-friendly` mode which means that while precomputing the average of all images for background subtraction filter, the images are not kept in RAM. This means that when the images are actually filtered (when the average is subtracted), the images have to be loaded from disk again.
+The command removes static background with factor `2` and stores the result in `Movie1/bckg_rem_Movie1` folder. It is also run in `ram-friendly` mode which means that while precomputing the average of all images for background subtraction filter, the images are not kept in RAM. Thus, when the images are actually filtered (when the average is subtracted), the images have to be loaded from disk again.
