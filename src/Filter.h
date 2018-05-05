@@ -81,30 +81,30 @@ public:
     }
 };
 
-// RescaleFilter maps colors in range [beg_, end_] to [0, 255]
-class RescaleFilter : public IFilterPure
+// Contrast filter maps colors in range [beg_, end_] to [0, 255]
+class ContrastFilter : public IFilterPure
 {
     // Rescale range [beg_, end_]
     int beg_, end_;
     cv::Mat lut_;
 
 public:
-    RescaleFilter(int beg, int end)
+    ContrastFilter(int beg, int end)
         : beg_(beg), end_(end)
     {
         if (beg_ < 0 || end_ > 255 || beg_ > end_)
-            throw HranolRuntimeException("Invalid range for rescale filter " + range_to_str_(beg_, end_));
+            throw HranolRuntimeException("Invalid range for contrast filter " + range_to_str_(beg_, end_));
     }
 
     static auto create(int beg, int end) {
-        return std::make_unique< RescaleFilter>(beg, end);
+        return std::make_unique< ContrastFilter>(beg, end);
     }
 
     virtual void apply_to(cv::Mat & img)
     {
         // Only char type matrices can be filtered with LUT
         if (img.depth() != CV_8U)
-            throw HranolRuntimeException("RescaleFilter can only be applied to char type (grayscale) matrices.");
+            throw HranolRuntimeException("ContrastFilter can only be applied to char type (grayscale) matrices.");
 
         if (lut_.empty())
             fill_lut_();
@@ -113,7 +113,7 @@ public:
     }
 
     virtual std::string desc() const {
-        return "Rescale filter with range " + range_to_str_(beg_, end_);
+        return "Contrast filter with range " + range_to_str_(beg_, end_);
     }
 
 private:
@@ -138,8 +138,8 @@ private:
 };
 
 
-// StaticBckgFilter subtracts the mean value of all images with factor removal_factor_
-class StaticBckgFilter : public IFilterWithPrecomp
+// BckgSubFilter subtracts the mean value of all images with factor subtraction_factor_
+class BckgSubFilter : public IFilterWithPrecomp
 {
     // Number of images summed
     size_t count_;
@@ -151,18 +151,18 @@ class StaticBckgFilter : public IFilterWithPrecomp
     cv::Mat factored_mean_;
     bool is_factored_mean_valid_;
 
-    double removal_factor_;
+    double subtraction_factor_;
 
 public:
-    StaticBckgFilter(double removal_factor) :
-        count_(0), is_factored_mean_valid_(false), removal_factor_(removal_factor)
+    BckgSubFilter(double subtraction_factor) :
+        count_(0), is_factored_mean_valid_(false), subtraction_factor_(subtraction_factor)
     {
-        if (removal_factor <= 0)
-            throw HranolRuntimeException("Static background removal factor must be positive: " + std::to_string(removal_factor));
+        if (subtraction_factor <= 0)
+            throw HranolRuntimeException("Background subtraction factor must be positive: " + std::to_string(subtraction_factor));
     }
 
-    static auto create(double removal_factor) {
-        return std::make_unique<StaticBckgFilter>(removal_factor);
+    static auto create(double subtraction_factor) {
+        return std::make_unique<BckgSubFilter>(subtraction_factor);
     }
 
     virtual void apply_to(cv::Mat &img)
@@ -173,9 +173,9 @@ public:
 
         if (!is_factored_mean_valid_)
         {
-            // Intention: removal_factor_ * (accumulator_ / count_)
+            // Intention: subtraction_factor_ * (accumulator_ / count_)
             // If the above equation was used, accumulator_ would have to be traversed twice
-            factored_mean_ = accumulator_ / (count_ / removal_factor_);
+            factored_mean_ = accumulator_ / (count_ / subtraction_factor_);
             factored_mean_.convertTo(factored_mean_, CV_8U);
             is_factored_mean_valid_ = true;
         }
@@ -211,7 +211,7 @@ public:
     }
 
     virtual std::string desc() const {
-        return "Static noise removal with factor " + std::to_string(removal_factor_);
+        return "Background subtraction with factor " + std::to_string(subtraction_factor_);
     }
 };
 

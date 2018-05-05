@@ -15,7 +15,7 @@ endif()
 
 # Require C++17 the proper way
 # However, for C++17 it only works from CMake 3.8 and this version is not
-# wildely supported yet. Therefore explicit flags for compilers are used  for now.
+# widely supported yet. Therefore explicit flags for compilers are used for now.
 # set(CMAKE_CXX_STANDARD 17)
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

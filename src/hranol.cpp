@@ -34,7 +34,7 @@ public:
     Hranol() : 
         recursive_(false),
         ram_friendly_(false),
-        fname_regex_(".*\\.(jpe?g|gif|tiff|png)"),
+        fname_regex_(".*\\.(jpe?g|gif|tif|tiff|png)"),
         folder_prefix_("fltrd"),
         incl_folder_prefix_(false) { }
 
@@ -47,17 +47,19 @@ void Hranol::parse_from_cli(int argc, char **argv)
     args::ArgumentParser parser(
         "Hranol -- batch image processing utility. By default only images in given folders are processed "
         "and the output is saved to a subfolder with prefix \"" + folder_prefix_ + "\". Supported filters: "
-        "static background removal, rescale filter and mask. Each filter is used when a corresponding filter-specific "
-        "flag is set. Only grayscale images are supported.",
+        "static background subtraction, contrast filter (normalization) and mask filter. Each filter is used when a corresponding filter-specific "
+        "option is set. Only grayscale images are supported.",
         "Visit the project page for further information: https://github.com/romeritto/hranol");
     parser.Prog(argv[0]);
     args::ValueFlag<std::string> mask_file(parser, "file",
         "Apply mask to every image. The mask size must match the sizes of all images.",
         { 'm', "mask" });
-    args::ValueFlag<double> removal_factor(parser, "removal factor",
-        "Static background removal factor. Subtracts the mean value of all images using given factor. You may use positive floating point values.",
+    args::ValueFlag<double> subtraction_factor(parser, "subtraction factor",
+        "Static background subtraction factor. Computes an average of all images (from single folder) and "
+        "subtracts this average from each image with given factor. You may use positive floating point "
+        "values for the factor.",
         { 's', "static-noise" });
-    args::Group rescale(parser, "Rescaling range [b, e]. Pixel values in range [b, e] will be mapped to [0, 255]:");
+    args::Group rescale(parser, "Rescaling range [b, e] for contrast filter. Pixel values in range [b, e] will be mapped to [0, 255]:");
     args::ValueFlag<int> rescale_beg(rescale, "range begin",
         "",
         { 'b', "rescale-begin" });
@@ -114,13 +116,13 @@ void Hranol::parse_from_cli(int argc, char **argv)
     if (mask_file)
         img_processor_.add_filter(std::move(MaskFilter::create(args::get(mask_file))));
     
-    if (removal_factor)
-        img_processor_.add_filter(std::move(StaticBckgFilter::create(args::get(removal_factor))));
+    if (subtraction_factor)
+        img_processor_.add_filter(std::move(BckgSubFilter::create(args::get(subtraction_factor))));
 
     if (rescale_beg || rescale_end)
     {
         if (rescale_beg && rescale_end)
-            img_processor_.add_filter(std::move(RescaleFilter::create(
+            img_processor_.add_filter(std::move(ContrastFilter::create(
                 args::get(rescale_beg),
                 args::get(rescale_end)
             )));
