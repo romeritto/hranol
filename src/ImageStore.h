@@ -22,11 +22,11 @@
 
 // IImageStore is an interface class for accessing the images that will be filtered.
 //
-// You can access a single image using get() method and save the changes using save().
+// You can access a single image using load() method and save the changes using save().
 // After finishing the work with the image, you have to release() it, otherwise you can't
-// get() another image.
+// load() another image.
 // It is designed this way because OnDemandImageStore can store only one image. If you
-// release() the current one, you can get() another one.
+// release() the current one, you can load() another one.
 class IImageStore 
 {
 protected:
@@ -65,7 +65,7 @@ public:
 
     std::string get_img_path(size_t i) const;
     
-    virtual cv::Mat & get(size_t i) = 0;
+    virtual cv::Mat & load(size_t i) = 0;
     virtual void release(size_t i) = 0;
     virtual void save(size_t i) = 0;
 };
@@ -83,13 +83,13 @@ public:
     { 
         imgs_.resize(img_paths_.size());
     }
-    virtual cv::Mat & get(size_t i);
+    virtual cv::Mat & load(size_t i);
     virtual void release(size_t i);
     virtual void save(size_t i);
 };
 
 
-// OnDemandImageStore loads only one image. When an image is loaded, subsequent get() of a different
+// OnDemandImageStore loads only one image. When an image is loaded, subsequent load() of a different
 // image from the loaded one must be preceded with release() of the currently loaded image.
 class OnDemandImageStore : public IImageStore
 {
@@ -102,7 +102,7 @@ public:
         : IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix)),
         is_img_loaded_(false) {}
     
-    virtual cv::Mat & get(size_t i);
+    virtual cv::Mat & load(size_t i);
     virtual void release(size_t i);
     virtual void save(size_t i);
 };

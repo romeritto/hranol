@@ -43,7 +43,7 @@ void ImageProcessor::apply_filters(IImageStore * imstore)
             cout << "\r\tPrecomputing: " << to_string(i + 1) << " / " << to_string(store_sz) << flush;
             try 
             {
-                cv::Mat & img = imstore->get(i);
+                cv::Mat & img = imstore->load(i);
 
                 for (auto&& of : precomp_filters_) 
                     of->precomp_from(img);
@@ -65,7 +65,7 @@ void ImageProcessor::apply_filters(IImageStore * imstore)
         cout << "\r\tFiltering: " << to_string(i + 1) << " / " << to_string(store_sz) << flush;
         try 
         {
-            cv::Mat & img = imstore->get(i);
+            cv::Mat & img = imstore->load(i);
 
             for (auto&& of : precomp_filters_)
                 of->apply_to(img);

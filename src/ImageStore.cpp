@@ -89,7 +89,7 @@ void IImageStore::create_dest()
     dest_created_ = true;
 }
 
-cv::Mat & RAMImageStore::get(size_t i)
+cv::Mat & RAMImageStore::load(size_t i)
 {
     assert(validate_idx(i, this->size()));
 
@@ -111,7 +111,7 @@ void RAMImageStore::save(size_t i)
     save_img(imgs_[i], img_paths_[i]);
 }
 
-cv::Mat & OnDemandImageStore::get(size_t i)
+cv::Mat & OnDemandImageStore::load(size_t i)
 {
     assert(validate_idx(i, this->size()));
     assert(!is_img_loaded_ || i == loaded_img_idx_);
