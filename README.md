@@ -12,11 +12,11 @@ Currently supported filters (see below for details):
 
 ## Teaser
 ```
-$  hranol -m "mask.png" -s 1.5 "Run 10-38-11"
+$  hranol -m "particles/mask.bmp" -s 1.1 "monitor"
 ```
-Command applies mask `mask.png` to each image from target folder `Run 10-38-11`. It also computes the
-average of all images and subtracts it from each image with factor `1.5`. All resulting images are
-saved to `fltrd_Run 10-38-11` folder created inside `Run 10-38-11`.
+Command applies mask `mask.png` to each image from target folder `monitor`. It also computes the
+average of all images and subtracts it from each image with factor `1.1`. All resulting images are
+saved to `fltrd_monitor` folder created inside `monitor`.
 
 ## Prerequisites
 You will need:
@@ -151,20 +151,25 @@ $ hranol -h
 
 ### Basic filtering
 ```
-$ hranol -m"mask.png" -s 2 -b 10 -e 20 -r Movies
+$ hranol -m "examples/mask.png" -s 1.3 -b 5 -e 9 -r examples/particles
 ```
-This command recursively (`-r` flag) processes `Movies` folder, **masking** each image with `mask.png`. It also uses **Background subtraction** with factor `2` and **Contrast filter** with range *[10, 20]*.
+This command recursively (`-r` flag) processes `particles` folder, **masking** each image with `mask.png`. It also uses **Background subtraction** with factor `1.3` and **Contrast filter** with range *[5, 9]*. Results can be found in folders `examples/particles/run1/fltrd_run1` and `examples/particles/run1/fltrd_run2`.
 
-If any folder starts with prefix `fltrd`, it is ignored. You can override this behaviour with flag `-i`.
+If any folder starts with prefix `fltrd`, it is ignored. That means running this very same command twice would not process `examples/particles/run1/fltrd_run1` and `examples/particles/run1/fltrd_run2` folders. You can override this behaviour with flag `-i`.
 
 ### Using regex for image names
+In `examples/monitor` we would wish to run following command:
 ```
-$ hranol -m"mask.png" -f "^abc.*\.png" Movie1 Movie2
+$ hranol -m "examples/monitor/mask.bmp" examples/monitor`
 ```
-The above command applies `mask.png` only to images in `Movie1` and `Movie2` that start with `abc` and have file extension `.png`. Use [ECMAScript regex syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions).
+The above command applies `mask.bmp` to images in `examples/monitor`. However, since `mask.png` is located in `monitor` folder it would also get filtered. This unwanted and `mask.png` can either be moved away from the `monitor` directory or we can use `-f[regex]` option to specify a regex that all processed filenames have to match:
+```
+$ hranol -m "examples/monitor/mask.bmp" -f "(?!^mask.bmp$)" examples/monitor`
+```
+Use [ECMAScript regex syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions).
 
 ### Changing output folder prefix
 ```
-$ hranol -s 2 -p "bckg_rem" --ram-friendly Movie1
+$ hranol -s1 -p"bckg_rem" -f"(?!^mask.bmp$)" --ram-friendly examples/monitor
 ```
-The command removes static background with factor `2` and stores the result in `Movie1/bckg_rem_Movie1` folder. It is also run in `ram-friendly` mode which means that while precomputing the average of all images for background subtraction filter, the images are not kept in RAM. Thus, when the images are actually filtered (when the average is subtracted), the images have to be loaded from disk again.
+The command removes static background with factor `1` and stores the result in `examples/monitor/bckg_rem_monitor` folder. It is also run in `ram-friendly` mode which means that while precomputing the average of all images for background subtraction filter, the images are not kept in RAM. Thus, when the images are actually filtered (when the average is subtracted), the images have to be loaded from disk again.
