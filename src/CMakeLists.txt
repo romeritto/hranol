@@ -6,12 +6,19 @@ cmake_minimum_required (VERSION 3.1)
 # Find OpenCV, you may need to set OpenCV_DIR variable
 # to the absolute path to the directory containing OpenCVConfig.cmake file
 # via the command line or GUI
-find_package(OpenCV 3 REQUIRED HINTS $ENV{OpenCV_DIR}/lib)
+# find_package(OpenCV 3 REQUIRED HINTS $ENV{OpenCV_DIR}/lib)
 
-if(CMAKE_VERSION VERSION_LESS "2.8.11")
+# Hardcoded opencv paths
+set(OpenCV_DIR ${CMAKE_CURRENT_SOURCE_DIR}/opencv)
+set(OpenCV_LIB_DIR ${OpenCV_DIR}/lib)
+set(OpenCV_INCLUDE_DIR ${OpenCV_DIR}/include)
+
+file(GLOB OpenCV_LIBS ${OpenCV_LIB_DIR}/*)
+
+# if(CMAKE_VERSION VERSION_LESS "2.8.11")
   # Add OpenCV headers location to your paths
-  include_directories(${OpenCV_INCLUDE_DIRS})
-endif()
+  # include_directories(${OpenCV_INCLUDE_DIRS})
+# endif()
 
 # Require C++17 the proper way
 # However, for C++17 it only works from CMake 3.8 and this version is not
@@ -31,7 +38,12 @@ endif()
 
 # Add source to this project's executable.
 add_executable (hranol "hranol.cpp" "FolderCrawler.cpp" "ImageStore.cpp" "ImageProcessor.cpp")
+set_target_properties(hranol PROPERTIES LINK_FLAGS "-static")
 
+# OpenCV includes
+target_include_directories(hranol PRIVATE ${OpenCV_INCLUDE_DIR})
+
+message(STATUS ${OpenCV_LIBS})
 
 # Link with libraries
 target_link_libraries(hranol ${OpenCV_LIBS})
