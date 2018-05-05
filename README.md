@@ -162,7 +162,7 @@ The teaser example contained following command:
 ```
 $ hranol -m "examples/monitor/mask.bmp" -s 1.1 examples/monitor
 ```
-It seems perfectly fine. However, since `mask.png` is located in `monitor` folder it would also get filtered. This is unwanted and `mask.png` can either be moved away from the `monitor` directory or we can use `-f[regex]` option to specify a regex that all processed filenames have to match:
+It seems perfectly fine. However, since `mask.bmp` is located in `monitor` folder it would also get filtered. This is unwanted and `mask.bmp` can either be moved away from the `monitor` directory or we can use `-f[regex]` option to specify a regex that all processed filenames have to match:
 ```
 $ hranol -m "examples/monitor/mask.bmp" -s 1.1 -f "(?!^mask.bmp$).*" examples/monitor
 ```
