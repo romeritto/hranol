@@ -34,7 +34,7 @@ public:
     Hranol() : 
         recursive_(false),
         ram_friendly_(false),
-        fname_regex_(".*\\.(jpe?g|gif|tif|tiff|png)"),
+        fname_regex_(".*\\.(jpe?g|gif|tif|tiff|png|bmp)"),
         folder_prefix_("fltrd"),
         incl_folder_prefix_(false) { }
 
