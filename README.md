@@ -164,12 +164,20 @@ $ hranol -m "examples/monitor/mask.bmp" -s 1.1 examples/monitor
 ```
 It seems perfectly fine. However, since `mask.bmp` is located in `monitor` folder it would also get filtered. This is unwanted and `mask.bmp` can either be moved away from the `monitor` directory or we can use `-f[regex]` option to specify a regex that all processed filenames have to match:
 ```
+# Linux (enclose regex in single quotes '')
+$ hranol -m "examples/monitor/mask.bmp" -s 1.1 -f '(?!^mask.bmp$).*' examples/monitor
+
+# Win
 $ hranol -m "examples/monitor/mask.bmp" -s 1.1 -f "(?!^mask.bmp$).*" examples/monitor
 ```
 Use [ECMAScript regex syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions).
 
 ### Changing output folder prefix
 ```
+# Linux (enclose regex in single quotes '')
+$ hranol -s1 -p"bckg_rem" -f'(?!^mask.bmp$).*' --ram-friendly examples/monitor
+
+# Win
 $ hranol -s1 -p"bckg_rem" -f"(?!^mask.bmp$).*" --ram-friendly examples/monitor
 ```
 The command removes static background with factor `1` and stores the result in `examples/monitor/bckg_rem_monitor` folder. It is also run in `ram-friendly` mode which means that while precomputing the average of all images for background subtraction filter, the images are not kept in RAM. Thus, when the images are actually filtered (when the average is subtracted), the images have to be loaded from disk again.
