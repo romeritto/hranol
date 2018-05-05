@@ -89,26 +89,30 @@ Filters are applied in the following order:
 ### Printing help
 ```
 $ hranol -h
-  ./build/src/hranol [folders...] {OPTIONS}
+    hranol [folders...] {OPTIONS}
 
     Hranol -- batch image processing utility. By default only images in given
     folders are processed and the output is saved to a subfolder with prefix
-    "fltrd". Supported filters: static background removal, rescale filter and
-    mask. Each filter is used when a corresponding filter-specific flag is set.
-    Only grayscale images are supported.
+    "fltrd". Supported filters: static background subtraction, contrast filter
+    (normalization) and mask filter. Each filter is used when a corresponding
+    filter-specific option is set. Only grayscale images are supported.
 
   OPTIONS:
 
       -m[file], --mask=[file]           Apply mask to every image. The mask size
                                         must match the sizes of all images.
-      -s[removal factor],
-      --static-noise=[removal factor]   Static background removal factor.
-                                        Subtracts the mean value of all images
-                                        using given factor. You may use positive
-                                        floating point values.
-      Rescaling range [b, e]. Pixel
-      values in range [b, e] will be
-      mapped to [0, 255]:
+      -s[subtraction factor],
+      --static-noise=[subtraction
+      factor]                           Static background subtraction factor.
+                                        Computes an average of all images (from
+                                        single folder) and subtracts this
+                                        average from each image with given
+                                        factor. You may use positive floating
+                                        point values for the factor.
+      Rescaling range [b, e] for
+      contrast filter. Pixel values in
+      range [b, e] will be mapped to
+      [0, 255]:
         -b[range begin],
         --rescale-begin=[range begin]
         -e[range end],
@@ -116,9 +120,9 @@ $ hranol -h
       -f[filename regex],
       --fname-regex=[filename regex]    If specified, only files matching given
                                         regex will be processed. Default value
-                                        is ".*\.(jpe?g|gif|tiff|png)" (matches
-                                        common image files). Use ECMAScript
-                                        regex syntax.
+                                        is ".*\.(jpe?g|gif|tif|tiff|png)"
+                                        (matches common image files). Use
+                                        ECMAScript regex syntax.
       -p[filtered folder prefix],
       --folder-prefix=[filtered folder
       prefix]                           Specifies prefix of subfolder that will
@@ -143,7 +147,6 @@ $ hranol -h
 
     Visit the project page for further information:
     https://github.com/romeritto/hranol
-
 ```
 
 ### Basic filtering
