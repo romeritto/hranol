@@ -120,7 +120,7 @@ $ hranol -h
       -f[filename regex],
       --fname-regex=[filename regex]    If specified, only files matching given
                                         regex will be processed. Default value
-                                        is ".*\.(jpe?g|gif|tif|tiff|png)"
+                                        is ".*\.(jpe?g|gif|tif|tiff|png|bmp)"
                                         (matches common image files). Use
                                         ECMAScript regex syntax.
       -p[filtered folder prefix],
