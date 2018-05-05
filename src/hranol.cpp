@@ -135,8 +135,8 @@ void Hranol::process()
 {
     FolderCrawler crawler(
         folders_,
-        std::move(folder_prefix_),
-        std::move(fname_regex_),
+        folder_prefix_,
+        fname_regex_,
         incl_folder_prefix_,
         recursive_,
         ram_friendly_
