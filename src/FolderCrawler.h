@@ -1,5 +1,5 @@
 //
-// Copyright © 2018 Roman Sobkuliak <r.sobkuliak@gmail.com>
+// Copyright Â© 2018 Roman Sobkuliak <r.sobkuliak@gmail.com>
 // This code is released under the license described in the LICENSE file
 // 
 
@@ -37,12 +37,12 @@ public:
     FolderCrawler(
         const std::vector< std::string> & folders,
         std::string folder_prefix,
-        std::string fname_regex_str,
+        const std::string & fname_regex_str,
         bool incl_folder_prefix,
         bool recursive, 
         bool ram_friendly) 
         : recursive_(recursive), ram_friendly_(ram_friendly), fname_regex_(fname_regex_str),
-         folder_prefix_(folder_prefix), incl_folder_prefix_(incl_folder_prefix)
+         folder_prefix_(std::move(folder_prefix)), incl_folder_prefix_(incl_folder_prefix)
 
     {
         // Loop is reversed so that first folders in the original vector
