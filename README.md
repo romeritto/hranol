@@ -80,6 +80,8 @@ Use this filter to mask your images. You should provide a path to *mask image* w
 ## What does hranol do
 After the input is parsed, all folders are processed separately. For each *input folder* output images are written to the *output folder* which is located in the *input folder*. Name of the *output folder* is same as *input folder*, but prefixed with *fltrd_* (default behaviour, can be changed with `-p` option). A small log file named *fltrd_info.txt* is also stored in the *output folder*.
 
+If you don't want each output folder to be contained inside its input folder you can use option `-o` to specify an output folder. 
+
 Filters are applied in the following order: 
 1. Background subtraction
 2. Contrast filter
@@ -89,17 +91,20 @@ Filters are applied in the following order:
 ### Printing help
 ```
 $ hranol -h
-    hranol [folders...] {OPTIONS}
+  hranol [folders...] {OPTIONS}
 
     Hranol -- batch image processing utility. By default only images in given
     folders are processed and the output is saved to a subfolder with prefix
-    "fltrd". Supported filters: static background subtraction, contrast filter
-    (normalization) and mask filter. Each filter is used when a corresponding
-    filter-specific option is set. Only grayscale images are supported.
+    "fltrd". Writing to subfolders can be overridden with option -o which
+    specifies output folder. Supported filters: static background subtraction,
+    contrast filter (normalization) and mask filter. Each filter is used when a
+    corresponding filter-specific option is set. Only grayscale images are
+    supported.
 
   OPTIONS:
 
       -m[file], --mask=[file]           Apply mask to every image. The mask size
+
                                         must match the sizes of all images.
       -s[subtraction factor],
       --static-noise=[subtraction
@@ -123,6 +128,11 @@ $ hranol -h
                                         is ".*\.(jpe?g|gif|tif|tiff|png|bmp)"
                                         (matches common image files). Use
                                         ECMAScript regex syntax.
+      -o[output folder],
+      --output-folder=[output folder]   Specifies output folder for filtered
+                                        images. If used together with recursive
+                                        option original folder structure will be
+                                        preserved (folders won't be flattened).
       -p[filtered folder prefix],
       --folder-prefix=[filtered folder
       prefix]                           Specifies prefix of subfolder that will
@@ -139,6 +149,7 @@ $ hranol -h
                                         folder are stored in memory when the
                                         folder is being processed. If that is
                                         not possible due to small RAM space, use
+
                                         this flag.
       folders...                        List of folders to process.
       -h, --help                        Display this help menu
@@ -156,6 +167,12 @@ $ hranol -s 1.3 -b 5 -e 9 -r examples/particles
 This command recursively (`-r` flag) processes `particles` folder. It uses **Background subtraction** with factor `1.3` and **Contrast filter** with range *[5, 9]*. Results can be found in folders `examples/particles/run1/fltrd_run1` and `examples/particles/run1/fltrd_run2`.
 
 If any folder starts with prefix `fltrd`, it is ignored. That means running this very same command twice would not process `examples/particles/run1/fltrd_run1` and `examples/particles/run1/fltrd_run2` folders. You can override this behaviour with flag `-i`.
+
+### Output folder
+```
+$ hranol -s 1.3 -b 5 -e 9 -r -o my-results examples
+```
+Recursively filters all examples and stores the result in `my-results` folder. The folder structure and folder names are preserved.
 
 ### Using regex for image names
 The teaser example contained following command:
