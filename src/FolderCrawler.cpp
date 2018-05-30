@@ -29,7 +29,7 @@ fs::path find_subfolder_dest(const fs::path & cur_path, const string & dest_fold
     {
         // yeah, nasty padding
         string idx = ((i < 10) ? "0" : "") + to_string(i);
-        dest = dest / (dest_folder_prefix + idx + "_" + origin_fname);
+        dest = cur_path / (dest_folder_prefix + idx + "_" + origin_fname);
         ++i;
     }
 
