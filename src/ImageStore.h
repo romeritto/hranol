@@ -13,12 +13,6 @@
 #include <vector>
 #include <memory>
 
-#ifdef _MSC_VER        // MSVC compiler
-    namespace fs = std::experimental::filesystem;
-#else
-    namespace fs = std::filesystem;
-#endif    // _MSC_VER
-
 
 // IImageStore is an interface class for accessing the images that will be filtered.
 //
@@ -30,20 +24,20 @@
 class IImageStore 
 {
 protected:
-    fs::path origin_;
-    fs::path dest_;
+    std::filesystem::path origin_;
+    std::filesystem::path dest_;
     bool dest_created_;
-    const std::vector< fs::path> img_paths_;
+    const std::vector< std::filesystem::path> img_paths_;
 
-    cv::Mat read_img(const fs::path & s);
-    void save_img(cv::Mat img, const fs::path & img_src);
+    cv::Mat read_img(const std::filesystem::path & s);
+    void save_img(cv::Mat img, const std::filesystem::path & img_src);
     void assign_dest(const std::string & dest_folder_prefix);
     void create_dest();
 
 public:
     IImageStore(
-        fs::path origin,
-        std::vector< fs::path> img_paths,
+        std::filesystem::path origin,
+        std::vector< std::filesystem::path> img_paths,
         const std::string & folder_prefix)
         : origin_(std::move(origin)), dest_created_(false),
         img_paths_(std::move(img_paths))
@@ -55,11 +49,11 @@ public:
         return img_paths_.size();
     }
 
-    fs::path get_origin() const {
+    std::filesystem::path get_origin() const {
         return origin_;
     }
 
-    fs::path get_dest() const {
+    std::filesystem::path get_dest() const {
         return dest_;
     }
 
@@ -78,7 +72,7 @@ class RAMImageStore : public IImageStore
     std::vector< cv::Mat> imgs_;
 
 public:
-    RAMImageStore(std::string origin, std::vector< fs::path> img_paths, std::string folder_prefix)
+    RAMImageStore(std::string origin, std::vector< std::filesystem::path> img_paths, std::string folder_prefix)
         : IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix))
     { 
         imgs_.resize(img_paths_.size());
@@ -98,7 +92,7 @@ class OnDemandImageStore : public IImageStore
     bool is_img_loaded_;
 
 public:
-    OnDemandImageStore(std::string origin, std::vector< fs::path> img_paths, std::string folder_prefix)
+    OnDemandImageStore(std::string origin, std::vector< std::filesystem::path> img_paths, std::string folder_prefix)
         : IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix)),
         is_img_loaded_(false) {}
     

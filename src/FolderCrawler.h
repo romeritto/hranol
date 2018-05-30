@@ -15,13 +15,6 @@
 #include <stack>
 #include <memory>
 
-#ifdef _MSC_VER     // MSVC compiler
-    namespace fs = std::experimental::filesystem;
-#else
-    namespace fs = std::filesystem;
-#endif // _MSC_VER
-
-
 // FolderCrawler is used to crawl (potentially recursively) folders in folders_ vector and picks
 // the files that should be filtered.
 class FolderCrawler {
@@ -31,7 +24,7 @@ class FolderCrawler {
     std::string folder_prefix_;
     bool incl_folder_prefix_;
 
-    std::stack< fs::path> folders_;
+    std::stack< std::filesystem::path> folders_;
 
 public:
     FolderCrawler(
@@ -48,7 +41,7 @@ public:
         // Loop is reversed so that first folders in the original vector
         // will be first in the stack
         for (auto it = folders.crbegin(); it != folders.crend(); ++it)
-            folders_.push(fs::path(*it));
+            folders_.push(std::filesystem::path(*it));
     }
 
     // Inspects a single folder and returns IImageStore that contains
