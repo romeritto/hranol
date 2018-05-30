@@ -52,28 +52,6 @@ void IImageStore::save_img(const cv::Mat img, const fs::path & img_src)
     }
 }
 
-void IImageStore::assign_dest(const string & dest_folder_prefix)
-{
-    string origin_fname = fs::canonical(
-        fs::absolute(origin_)
-    ).filename().string();
-
-    // Finds destination folder name.
-    dest_ = origin_ / (dest_folder_prefix + "_" + origin_fname);
-    int i = 0;
-    while (i < 100 && fs::exists(dest_))
-    {
-        // yeah, nasty padding
-        string idx = ((i < 10) ? "0" : "") + to_string(i);
-        dest_ = origin_ / (dest_folder_prefix + idx + "_" + origin_fname);
-        ++i;
-    }
-
-    // All possible names were used
-    if (fs::exists(dest_))
-        throw HranolRuntimeException("Suitable name for output directory could not be found.");
-}
-
 void IImageStore::create_dest()
 {
     if (dest_created_)

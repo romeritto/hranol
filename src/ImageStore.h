@@ -31,19 +31,16 @@ protected:
 
     cv::Mat read_img(const std::filesystem::path & s);
     void save_img(cv::Mat img, const std::filesystem::path & img_src);
-    void assign_dest(const std::string & dest_folder_prefix);
     void create_dest();
 
 public:
     IImageStore(
         std::filesystem::path origin,
-        std::vector< std::filesystem::path> img_paths,
-        const std::string & folder_prefix)
-        : origin_(std::move(origin)), dest_created_(false),
+        std::filesystem::path dest,
+        std::vector< std::filesystem::path> img_paths)
+        : origin_(std::move(origin)), dest_(std::move(dest)), dest_created_(false),
         img_paths_(std::move(img_paths))
-    { 
-        assign_dest(folder_prefix);
-    }
+    {}
 
     virtual size_t size() const {
         return img_paths_.size();
@@ -72,8 +69,10 @@ class RAMImageStore : public IImageStore
     std::vector< cv::Mat> imgs_;
 
 public:
-    RAMImageStore(std::string origin, std::vector< std::filesystem::path> img_paths, std::string folder_prefix)
-        : IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix))
+    RAMImageStore(std::filesystem::path origin,
+        std::filesystem::path dest,
+        std::vector< std::filesystem::path> img_paths)
+        : IImageStore(std::move(origin), std::move(dest), std::move(img_paths))
     { 
         imgs_.resize(img_paths_.size());
     }
@@ -92,9 +91,11 @@ class OnDemandImageStore : public IImageStore
     bool is_img_loaded_;
 
 public:
-    OnDemandImageStore(std::string origin, std::vector< std::filesystem::path> img_paths, std::string folder_prefix)
-        : IImageStore(std::move(origin), std::move(img_paths), std::move(folder_prefix)),
-        is_img_loaded_(false) {}
+    OnDemandImageStore(std::filesystem::path origin,
+        std::filesystem::path dest,
+        std::vector< std::filesystem::path> img_paths)
+        : IImageStore(std::move(origin), std::move(dest), std::move(img_paths)), is_img_loaded_(false)
+         {}
     
     virtual cv::Mat & load(size_t i);
     virtual void release(size_t i);

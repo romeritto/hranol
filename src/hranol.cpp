@@ -22,6 +22,7 @@ class Hranol
     bool recursive_;
     bool ram_friendly_;
     std::string fname_regex_;
+    std::string output_folder_;
     // Prefix of filtered folders
     std::string folder_prefix_;
     // Indicates whether folders starting with folder_prefix_ should be included
@@ -35,6 +36,7 @@ public:
         recursive_(false),
         ram_friendly_(false),
         fname_regex_(".*\\.(jpe?g|gif|tif|tiff|png|bmp)"),
+        output_folder_(""),
         folder_prefix_("fltrd"),
         incl_folder_prefix_(false) { }
 
@@ -46,8 +48,9 @@ void Hranol::parse_from_cli(int argc, char **argv)
 {
     args::ArgumentParser parser(
         "Hranol -- batch image processing utility. By default only images in given folders are processed "
-        "and the output is saved to a subfolder with prefix \"" + folder_prefix_ + "\". Supported filters: "
-        "static background subtraction, contrast filter (normalization) and mask filter. Each filter is used when a corresponding filter-specific "
+        "and the output is saved to a subfolder with prefix \"" + folder_prefix_ + "\". Writing to subfolders "
+        "can be overridden with option -o which specifies output folder. Supported filters: static background "
+        "subtraction, contrast filter (normalization) and mask filter. Each filter is used when a corresponding filter-specific "
         "option is set. Only grayscale images are supported.",
         "Visit the project page for further information: https://github.com/romeritto/hranol");
     parser.Prog(argv[0]);
@@ -70,6 +73,10 @@ void Hranol::parse_from_cli(int argc, char **argv)
         "If specified, only files matching given regex will be processed. Default value is \"" + fname_regex_ + "\" "
         "(matches common image files). Use ECMAScript regex syntax.",
         {'f', "fname-regex"});
+    args::ValueFlag<std::string> output_folder(parser, "output folder",
+        "Specifies output folder for filtered images. If used together with recursive option original folder structure "
+        "will be preserved (folders won't be flattened).",
+        { 'o', "output-folder" });
     args::ValueFlag<std::string> folder_prefix(parser, "filtered folder prefix",
         "Specifies prefix of subfolder that will hold filtered images. Default value is \"" + folder_prefix_ + "\"",
         { 'p', "folder-prefix" });
@@ -107,6 +114,9 @@ void Hranol::parse_from_cli(int argc, char **argv)
     if (fname_regex)
         fname_regex_ = args::get(fname_regex);
 
+    if (output_folder)
+        output_folder_ = args::get(output_folder);
+
     if (folder_prefix)
         folder_prefix_ = args::get(folder_prefix);
 
@@ -135,12 +145,14 @@ void Hranol::process()
 {
     FolderCrawler crawler(
         folders_,
+        output_folder_,
         folder_prefix_,
         fname_regex_,
         incl_folder_prefix_,
         recursive_,
         ram_friendly_
     );
+
     while (crawler.has_next_run())
     {
         try {
