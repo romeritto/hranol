@@ -56,7 +56,13 @@ void IImageStore::create_dest()
 {
     if (dest_created_)
         return;
-
+    
+    // Remove trailling slash because fs::create_directories cannot create path ending
+    // with fs::path::preferred_separator
+    if (dest_.string().back() == fs::path::preferred_separator) {
+        dest_ = dest_.parent_path();
+    }
+    
     fs::create_directories(dest_);
     dest_created_ = true;
 }
