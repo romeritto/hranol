@@ -42,6 +42,8 @@ public:
         img_paths_(std::move(img_paths))
     {}
 
+    virtual ~IImageStore() { }
+
     virtual size_t size() const {
         return img_paths_.size();
     }

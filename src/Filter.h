@@ -23,6 +23,7 @@ public:
     virtual void apply_to(cv::Mat & img) = 0;
     // Returns string describing particular filter
     virtual std::string desc() const = 0;
+    virtual ~IFilter() { };
 };
 
 
